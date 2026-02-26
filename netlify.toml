@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+  
+# Note: Set VITE_API_URL in Netlify dashboard under Environment Variables
+# Example: VITE_API_URL = https://your-backend.railway.app/api
