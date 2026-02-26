@@ -15,12 +15,16 @@ export const useAuth = () => {
 const getApiUrl = () => {
   // Check if we're in production (Netlify)
   if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL
+    const url = import.meta.env.VITE_API_URL
+    console.log('🌐 Using API URL from environment:', url)
+    return url
   }
   // Check if we're on a deployed domain (not localhost)
   if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
-    // Try to infer backend URL (if backend is on same domain with /api)
-    // Or return empty to use relative paths
+    // On Netlify but no VITE_API_URL set - this is an error!
+    console.error('❌ VITE_API_URL not set! Frontend will try to use relative paths which will fail.')
+    console.error('💡 Set VITE_API_URL in Netlify environment variables!')
+    // Still return empty to avoid breaking, but log the error
     return ''
   }
   // Default to localhost for local development
@@ -30,10 +34,8 @@ const getApiUrl = () => {
 const API_URL = getApiUrl()
 axios.defaults.baseURL = API_URL || '/api'
 
-// Log API URL for debugging (remove in production)
-if (import.meta.env.DEV) {
-  console.log('API URL:', API_URL || '/api')
-}
+// Always log API URL for debugging (helps catch issues)
+console.log('🔗 API Base URL:', axios.defaults.baseURL)
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
